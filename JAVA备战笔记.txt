@@ -1,0 +1,498 @@
+容器：
+
+Java集合类：Set、List、Queue和Map四种体系。
+Java集合和数组的区别：1.数组定长，集合不定长。2.数组元素可以是基本类型，也可以是对象引用；而集合只可以是对象引用。
+
+Collection接口是Set,Queue,List的父接口；其中iterator()方法，该方法的返回值是Iterator，迭代器，用来遍历集合中的元素，有 boolean hasNext()和 E next()方法。
+
+其中Set代表无序、不可重复的集合；
+Map里的key是不可重复的，key用户标识集合里的每项数据。
+Set集合不允许包含相同的元素，若输入已含有的元素add()会返回false；可使用 Set<K> keySet()获取键的视图。
+List是有序集合，默认从0开始按添加顺序设索引，在Collection基础上添加了一些根据索引来操作元素的方法。
+Queue集合“先进先出”(FIFO),新元素插入(offer)到队列的尾部，访问元素(poll)(peek)操作。
+
+ArrayList:以数组实现，能自动扩容，可以认为是“动态数组”。缺点是:如果按下标add(i,e), remove(i), remove(e)，则要用System.arraycopy()来移动部分受影响的元素，性能就变差了，这是基本劣势；其中，自动扩容也是使用的System.arraycopy()来实现。
+
+ListedList:以双向链表实现,按下标访问元素 get(i)/set(i,e)要遍历链表将指针移动到位(如果i>数组大小的一半，会从末尾移起)。因此获取节点的复杂度为O(n/2)。
+
+HashMap:参数：一个线性的数组实现的，（容量(Capacity)和负载因子(Load factor)）。可以接收null的键值，是非同步的，不保证数据有序。可使用Set<Map.Entry<K,V>> entrySet() 获得Map.Entry进行遍历。
+其中put():先hashCode()获取code在用hash函数(高16bit不变，低16bit和高16bit做了一个异或)算出index值,无碰撞则存入，若碰撞了，已链表或红黑树存入bucket桶里；
+get():获取key的index，调用equals()方法确定键值对，命中获取，未命中则若是链表，O(n),若是树，则O(logn)。
+（一个bucket桶中碰撞冲突的元素超过某个限制(默认是8)，则使用红黑树来替换链表，从而提高速度。）
+
+TreeMap:使用红黑树实现,好处是有不错的平衡性,,速度能达到log(n)的水平，可以保持key的大小顺序(即树的中序遍历(LDR))。
+
+LinkedHashMap:是Hash表和链表的实现，并且依靠着双向链表,保证了迭代顺序是插入的顺序。与父类HashMap不同基本是在put()和get()等操作中加了维护那个具有访问顺序的双向链表。
+
+值传递（pass by value）是指在调用函数时将实际参数复制一份传递到函数中，这样在函数中如果对参数进行修改，将不会影响到实际参数。
+引用传递（pass by reference）是指在调用函数时将实际参数的地址直接传递到函数中，那么在函数中对参数所进行的修改，将影响到实际参数。
+
+Java中其实还是值传递的，只不过对于对象参数，值的内容是对象的引用。
+
+红黑树：
+特性：1.节点是红色或黑色2.根节点一定是黑色3.每个叶节点都是黑色的空节点(NULL节点)4.每个红节点的两个子节点都是黑色的5.从任一节点到其每个叶子节点的所有路径都包含相同数目的黑色节点
+正是由于这些原因使得红黑树是一个平衡二叉树。
+
+语法糖主要有泛型、变长参数、条件编译、自动拆装箱、内部类等；
+虚拟机并不支持这些语法，它们在编译阶段就被还原回了简单的基础语法结构，这个过程成为解语法糖。
+
+Java 泛型：使得在编译阶段完成一些类型转换的工作，避免在运行时强制类型转换而出现ClassCastException，即类型转换异常。
+好处：1.类型安全。2.消除了代码中许多的强制类型转换，增强了代码的可读性。3.为较大的优化带来了可能。
+
+JDK1.7：Java允许在构造器后不需要带完成的泛型信息，只要给出一对尖括号（<>）即可，Java可以推断尖括号里应该是什么泛型信息。
+泛型类派生子类：使用泛型接口、泛型父类派生子类时不能再包含类型形参，需要传入具体的类型，或者不指定具体类型(系统会当成Object)。
+
+泛型：
+
+泛型方法：就是在声明方法时定义一个或多个类型形参。
+修饰符<T, S> 返回值类型 方法名（形参列表）｛
+   方法体
+}
+
+类型通配符:一个问号（？), 它的元素类型可以匹配任何类型。
+
+上限通配符:使用extends关键字指定这个类型必须是继承某个类，或者实现某个接口，也可以是这个类或接口本身。
+它表示集合中的所有元素都是Shape类型或者其子类
+List<? extends Shape>
+
+下限通配符:使用super关键字指定这个类型必须是是某个类的父类，或者是某个接口的父接口，也可以是这个类或接口本身。
+它表示集合中的所有元素都是Circle类型或者其父类
+List <? super Circle>
+
+类型擦除:由于Java泛型只是作用于代码编译阶段,不管为泛型的类型形参传入哪一种类型实参,在编译时，正确检验泛型结果后，会将泛型的相关信息擦出，因而泛型信息不会进入到运行时阶段。
+
+注意：在静态方法、静态初始化块或者静态变量的声明和初始化中不允许使用类型形参。由于系统中并不会真正生成泛型类，所以instanceof运算符后不能使用泛型类。
+
+反射：
+
+1.通过Java反射查看类信息：
+获得Class对象：
+1.class1 = Class.forName("com.lvr.reflection.Person"); //第一种方式 通过Class类的静态方法——forName()来实现
+2.class1 = Person.class; //第二种方式 通过类的class属性
+3.Person person = new Person(); Class<?> class1 = person.getClass(); //第三种方式 通过对象getClass方法
+--Class对象有很多的方法可以获取该Class对象的成员变量、方法、构造函数、注解以及Class对象的信息。
+--生成类的实例对象：1.Object obj = class1.newInstance();//第一种方式 Class对象调用newInstance()方法生成 2.Constructor<?> constructor = class1.getDeclaredConstructor(String.class);obj = constructor.newInstance("hello"); //第二种方式 对象获得对应的Constructor对象，再通过该Constructor对象的newInstance()方法生成
+--调用类的方法时，如果需要调用某个对象的private方法时，可以先调用Method对象的setAccessible(boolean flag)，设为true，取消Java语言的访问权限检查。 
+
+代理模式：使用代理对象完成用户请求，屏蔽用户对真实对象的访问。
+静态代理：代理类是在编译时就实现好的。
+动态代理：代理类是在运行时生成的。
+代理模式的参与者：
+1.主题接口：委托对象和代理对象共同需要实现的接口。
+2.目标对象：即委托对象。
+3.代理对象：Proxy 是代理对象。
+4.客户端 ：使用代理类和主题接口完成一些工作。
+
+Java反射机制与动态代理：动态代理是指在运行时动态生成代理类。
+
+--动态代理涉及的主要类：
+1.java.lang.reflect.Proxy:提供了用户创建动态代理类和代理对象的静态方法。
+----1.static Class<?> getProxyClass(ClassLoader loader, Class<?>... interfaces)返回代理类的java.lang.Class对象；  
+----2.static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)返回代理类实例。）
+2.java.lang.reflect.InvocationHandler:"调用处理器"，它是一个接口。当调用动态代理类中的方法时，将会直接转接到执行自定义的InvocationHandler中的invoke()方法。
+
+泛型和反射Class类的使用：泛型可以避免类型转换，防止出现ClassCastException，即类型转换异常。
+--对于获取成员变量的类型：普通类型的 Field 的数据类型可以通过 Field 的 getType() 方法获取；而泛型参数的类型的 Field的泛型类型，则可以通过Field 的getGenericType() 方法获取。
+
+注解(Annotation)：
+
+元数据：是数据进行说明描述的数据，即程序元素的额外信息。
+
+Java内建注解：
+1.@Override ：用于告知编译器，我们需要覆写超类的当前方法。
+2.@Deprecated：用于告知编译器，某一程序元素(比如方法，成员变量)不建议使用了（即过时了，标志的变量被使用时会有删除线提示）。
+3.@SuppressWarnings：用于告知编译器忽略特定的警告信息；该注解有方法value(）,可支持多个字符串参数，用户指定忽略哪种警告。
+4.@FunctionalInterface：用户告知编译器，检查这个接口，保证该接口是函数式接口，即只能包含一个抽象方法。
+
+用与修饰其他注解的注解：
+1.@Documented：用户指定被该元Annotation修饰的Annotation类将会被javadoc工具提取成文档。
+2.@Inherited：被它修饰的Annotation将具有继承性。
+3.@Retention：表示该注解类型的注解保留的时长。(SOURCE:仅存在JAVA源文件；CLASS：存在JAVA源文件和CLASS字节码文件，运行时VM不保留；RUNTIME:都存在，可通过反射读取注解)
+4.@Target：表示该注解类型的所适用的程序元素类型。
+
+自定义注解：@interface
+public @interface MyAnnotataion{
+    String name();
+    String website() default "hello";
+    int revision() default 1;
+}
+ps：注解方法不带参数，注解方法可有默认值。
+
+注解解析：接口AnnotatedElement，内有获取注解的方法。几个实现类：Class，Constructor，Field，Method，Package都有它的实现。
+
+---------------------
+
+IO:
+
+Java采用unicode编码，2个字节来表示一个字符；C语言中采用ASCII，一个字符通常占1个字节，而unicode向下兼容ASCII。
+utf-8编码方案：按照unicode编码编号，为了节省资源，采用变长编码，编码长度从1个字节到6个字节不等。
+
+路径分隔符：windows： "/" "\" 都可以；linux/unix： "/"；
+如果windows选择用"\"做分割符的话,那么请记得替换成"\",因为Java中"\"代表转义字符，一般推荐使用代码File.separator，表示跨平台分隔符。
+
+可以通过File[] files = file.listFiles(new FilenameFilter()）对目录进行扫描（File类有很多用于扫描的方法）。
+
+字节流和字符流的区别：1.读写单位不同：字节流以字节（8bit）为单位，字符流以字符为单位，根据码表映射字符，一次可能读多个字节。2.处理对象不同：字节流能处理所有类型的数据（如图片、avi等），而字符流只能处理字符类型的数据。
+
+处理流来包装节点流是一种典型的装饰器设计模式
+
+Java的IO流有四大基类：InputStream,Reader,OutputStream以及Writer。字符流字节流的类其中的方法不同之处只不过读取的数据单元不同。
+（Reader,Writer的单元是char,而InputStream,OutputStream的单元是byte）
+--注意：
+1.对于输入流，要调用close()方法关闭，因为程序里打开的IO资源不属于内存资源，垃圾回收机制无法回收该资源。
+2.对于输出流，关闭输出流除了保证资源被回收，还会自动执行输出流的flush()方法。
+3.public FileOutputStream(String name, boolean append)中的append指的是是否将流内容写入到file文件的末尾，而不是删除file文件内容重新开头。
+
+RandomAccessFile：支持读写，支持“随机访问”。重要使用场景就是网络请求中的多线程下载及断点续传。
+
+RandomAccessFile的Mode:1."r"2."rw"3."rws":要求对文件内容和元数据的每个更新都同步写入储存4."rwd"只要求文件内容每个更新都同步写入存储。
+
+NIO：基于通道(Channel)和缓冲区(Buffer)进行操作，Selector。
+*数据总是从通道读取到缓冲区中，或者从缓冲区写入通道也类似*
+NIO有实现非阻塞的具体类。
+
+Buffer：三个参数：
+1.Capacity：buffer固定的大小。
+2.Position：光标位置，当为写模式，最大是Capacity-1；当为读模式，最大是limit-1。
+3.Limit：写模式时，等于Capacity；读模式时，limit则代表我们所能读取的最大数据量。
+
+Channel：通道可以读也可以写。有子类：FileChannel,DatagramChannel,SocketChannel,ServerSocketChannel；（除Fi了Channel）可通过设置SelectableChannel configureBlocking(boolean block)：调整此通道的阻塞模式，设置为blocking或者non-blocking。
+
+blocking和non-blocking的区别：
+blocking IO会一直block住对应的进程直到操作完成，而non-blocking IO在kernel还准备数据的情况下会立刻返回，但当数据准备好要拷贝到用户内存时，还是会被block。
+
+synchronous IO和asynchronous IO的区别：
+synchronous IO做”IO 操作”的时候会将process阻塞。
+
+而事实上，blocking和non-blocking都属于synchronous IO。
+
+JDK1.7才增加asynchronous IO：AsynchronousServerSocketChannel等等。
+
+Selelctor：继承Thread，实现单线程管理多个channels,也就是可以管理多个网络链接。
+Channel使用时，必须时non-blocking的。
+
+JAVA的基本类型：
+(1字节 1B 8bit,即8比特位)
+byte 1B
+short 2B
+int 4B
+long 8B
+float 4B
+double 8B
+char 2B
+
+异常：
+
+ throw -- 用于抛出异常。
+ throws -- 用在方法签名中，用于声明该方法可能抛出的异常。
+
+ Throwable是Java语言中所有错误或异常的超类；子类有Error和Exception。
+
+ Exception是会被编译器检查的异常(Checked Exception)，检查性异常
+
+ RuntimeException是Exception的子类，是Java虚拟机正常运行期间抛出的异常的超类，而编译器不会检查RuntimeException异常。 例如：除数为零时，抛出的ArithmeticException异常。非检查性异常。
+
+ Error：错误，不会被编译器检查。例如：资源不足、约束失败。程序本身无法修复这些错误的。非检查性异常。
+
+ 抽象类和接口：接口是对动作的抽象，抽象类是对根源的抽象。
+
+ 抽象类：可以有自己的数据成员，也可以有非abstarct的成员方法，也可以没有抽象方法。
+
+ 接口：只能有静态的不能被修改的静态的常量（static final）；没有this指针，没有构造方法。JDK1.8中可以使用default关键字实现默认方法和使用静态方法，所有的方法默认是public abstract。
+
+ Stack栈先进后出，后进先出；Queue先进先出。
+
+ Java中有三种类型的对象拷贝：浅拷贝(Shallow Copy)、深拷贝(Deep Copy)、延迟拷贝(Lazy Copy)。
+
+ 浅拷贝：对象拷贝时，基本类型就拷贝的是值，而引用类型拷贝的是内存地址。即引用变量发生改变了就会相互影响。
+
+ 深拷贝：拷贝时，直接创建拷贝对象进行拷贝。即无论是基本类型还是引用对象都互不影响。（可通过序列化实现深拷贝）
+
+ transient关键字：指定的成员变量在类进行序列化时，不会被序列化。
+ (只能修饰变量，不能方法和类，还有本地变量也不可以，静态变量不管是否被transient修饰，均不能被序列化。)
+
+ Serializable接口：所有的序列化将会自动进行，transient关键字有用。
+
+ Externalizable接口：没有任何东西可以自动序列化，需要在writeExternal方法中进行手工指定所要序列化的变量，这与是否被transient修饰无关。
+
+让finally语句不会执行的两种方法：
+1.try语句没有被执行到，如在try语句之前就返回了，这样finally语句就不会执行。
+2.在try块中使用System.exit(0)，终止Java虚拟机JVM。
+
+finally：
+1.finally块的语句在try或catch中的return语句执行之后，返回之前执行。
+2.finally里的修改语句可能影响也可能不影响try或catch中return已经确定的返回值。
+3.若finally里也有return语句则覆盖try或catch中的return语句直接返回。
+
+JAVA 8 新特性：
+1.Lambda表达式和函数式接口
+
+2.接口的默认方法和静态方法
+
+3.方法的引用
+--Class::new 构造器引用
+--Class::static_method 静态方法引用
+--Class::method 某个类的成员方法的引用
+--instance::method 某个实例对象的成员方法的引用
+
+4.重复注解：@Repeatable注解定义重复注解。
+
+5.更好的类型推断
+
+6.拓宽注解的应用场景：新增了ElementType.TYPE_USER和ElementType.TYPE_PARAMETER；注解几乎可以使用在任何元素上：局部变量、接口类型、超类和接口实现类，甚至可以用在函数的异常定义上。
+
+---------------------
+
+普通的类方法是可以和类名同名的，和构造方法唯一的区分就是，构造方法没有返回值。
+
+==：对于基本类型，变量直接存储的是“值”，比较的就是值。而对于非基本数据类型的变量，存的是关联的内存地址，因此比较的是地址。
+
+equals方法：不能比较基本类型；类中，对没有对equals方法进行重写，比较的是对象的地址，而重写了equals方法的，比较的是对象的内容。
+
+线程分为守护线程和非守护线程（即用户线程);只要当前JVM实例中尚存在任何一个非守护线程没有结束，守护线程就全部工作；只有当最后一个非守护线程结束时，守护线程随着JVM一同结束工作。守护线程最典型的应用就是 GC (垃圾回收器)。
+
+ 存在使i + 1 < i的数，当i为int能表示的最大整数时，i+1就溢出变成负数了。
+
+ 存在使i > j || i <=j不成立的数:比如Double.NaN或Float.NaN
+
+ 浮点数后面不写F，默认是double
+
+null值可以强制转换为任何java类类型，是合法的。static方法的调用是和类名绑定的，不借助对象进行访问所以能正确输出。
+
+对象的初始化顺序：（1）类加载之后，按从上到下（从父类到子类）执行被static修饰的语句；（2）当static语句执行完之后,再执行main方法；（3）如果有语句new了自身的对象，将从上到下执行构造代码块{...}、构造器（两者可以说绑定在一起）。
+
+抽象类中的抽象方法（加了abstract关键字的方法）不能实现。即不能有{};
+
+子类没有显示调用父类构造函数，不管子类构造函数是否带参数都默认调用父类无参的构造函数，若父类没有则编译出错。
+
+-----------------------
+
+并发
+
+创建线程的三种方式:
+1.继承Thread类创建线程类
+2.通过Runnable接口创建线程类
+3.通过Callable和Future(用实现Future的子类FutureTask)创建线程
+
+实现Runnable、Callable接口的方式创见多线程：好处是只是实现了接口，还可以继承其他类；访问当前线程，要使用Thread.currentThread()方法。
+
+使用继承Thread类的方式创建多线程：直接使用this即可获得当前线程；继承了Thread类，所以不能再继承其他父类。
+
+线程池的优势：1.通过重用已存在的线程，降低系统线程创建和销毁造成的资源消耗2.无需创建线程直接使用，提高系统响应速度3.方便线程并发数的管控。
+
+ExecutorService是线程池的基接口。
+ExecutorService service = new ThreadPoolExecutor(....);
+
+ThreadPoolExecutor参数含义:
+1.corePoolSize:线程池中的核心线程数,默认情况会一直存活在线程池中。如果ThreadPoolExecutor设置allowCoreThreadTimeOut属性设为true，超时时间就由keepAliveTime来指定，超时则被终止。
+2.maximumPoolSize：线程池中所容纳的最大线程数，即核心线程数+非核心线程数的容量。
+3.keepAliveTime：只有设置了allowCoreThreadTimeOut属性设为true时，才有效。
+4.unit：一个时间单位的枚举。
+5.workQueue：线程池中用于保存等待执行的任务的阻塞队列，有很多种。
+6.threadFactory：为线程池提供新线程的创建；是一个接口，里面只有一个newThread方法。 默认为DefaultThreadFactory类。
+7.handler:实现RejectedExecutionHandler接口的对象;当任务队列已满并且线程池中的活动线程已经达到所限定的最大值或者是无法成功执行任务，这时候ThreadPoolExecutor会调用RejectedExecutionHandler中的rejectedExecution方法。ThreadPoolExecutor中有四个内部类实现了RejectedExecutionHandler接口可以用。
+
+通过execute和submit两种方式来向线程池提交一个任务。
+execute方法没有返回值；
+submit方法会返回一个future对象，可通过future来判断任务是否执行成功，获取返回值。
+
+通过shutdown()和shutdownNow()关闭线程池。
+shutdown()：将线程池状态设置成SHUTDOWN状态，然后中断所有没有正在执行任务的线程。
+shutdownNow():状态设置成STOP状态，然后中断所有任务(包括正在执行的)的线程,，并返回等待执行任务的列表。
+
+执行流程：提交任务->核心线程池已满？->工作队列已满？->线程池已满？->按饱和策略处理。
+
+Java中四种具有不同功能常见的线程池：通过Executors类的静态方法进行创建，同时还有创建DefaultThreadFactory的方法。
+
+1.newFixedThreadPool:**所容纳最大的线程数就是我们设置的核心线程数**它能够更快速的响应外界请求，不存在超时机制。
+
+2.newCachedThreadPool：**核心线程数为0，最大线程数可以任意大**当线程池中的线程都处于活动状态的时候，线程池就会创建一个新的线程来处理任务。该线程池中的线程超时时长为60秒，所以当线程处于闲置状态超过60秒的时候便会被回收。
+
+3.newScheduledThreadPool：**核心线程数固定，最大线程数可以任意大，schedule()方法进行延迟任务**有强大的定时执行任务功能。
+
+4.newSingleThreadExecutor：**只有一个核心线程,线程最大数为1，任务队列大小没有限制**任务执行之间我们不需要处理线程同步的问题。
+
+技巧：任务类别：1.CPU密集型任务2.IO密集型任务3.混合型任务。(N代表CPU个数)
+1.线程池中线程个数应尽量少，如配置N+1个线程的线程池。
+2.由于IO操作速度远低于CPU速度，为提高cpu利用率v,可配置如2*N。
+3.两类任务执行时间相差无几，拆分；两类任务执行时间有数据级的差距，没必要拆分。
+
+BlockingQueue是一个接口：不接受 null 元素；可以是限定容量的；支持Collection 接口；内部排队方法使用内部锁，因此是是线程安全的。
+
+实现BlockingQueue接口的类：
+
+1.ArrayBlockingQueue：由数组支持的有边界阻塞队列，队列的头部是在队列中存在时间最长的元素。队列的尾部是在队列中存在时间最短的元素。容量大小一旦指定就不可改变。存在公平访问与非公平访问的区别。采用的同一个ReentrantLock锁。
+
+2.LinkedBlockingQueue:由链表实现的有界也可以无界的队列阻塞队列，但大小默认值为Integer.MAX_VALUE，可以设置上限。添加采用的是putLock，移除采用的则是takeLock。
+
+3.DelayQueue：没有大小限制的队列，元素需要实现 java.util.concurrent.Delayed接口；元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素。因此，（生产者）永远不会被阻塞。
+
+4.PriorityBlockingQueue：没有边界的队列，所以不会阻塞生产者；元素必须实现 java.lang.Comparable 接口。
+
+5.SynchronousQueue：只能够容纳单个元素。因此，当没有元素时，消费者阻塞；有元素时，生产者阻塞。
+
+死锁条件：
+1.互斥条件：一个资源每次只能被一个线程使用。
+2.请求与保持条件：一个线程因请求资源而阻塞时，对已获得的资源保持不放。
+3.不剥夺条件：线程已获得的资源，在未使用完之前，不能强行剥夺。
+4.循环等待条件：若干线程之间形成一种头尾相接的循环等待资源关系。
+
+JAVA编程中，有3种典型的死锁类型：
+1.静态的锁顺序死锁：
+描述：a和b两个方法都需要获得A锁和B锁，a获得A锁，b获得B锁；a与b相互等待。
+解决：需要多个锁的线程，都要以相同的顺序来获得锁。
+
+2.动态的锁顺序死锁：
+描述：动态的锁顺序死锁是指两个线程调用同一个方法时，传入的参数颠倒造成的死锁。
+解决：使用System.identifyHashCode来定义锁的顺序。确保所有的线程都以相同的顺序获得锁。
+
+3.协作对象之间发生的死锁：
+描述：持有锁的对象A调用了外部对象B的方法，这是非常危险的（可能发生死锁）。如果有线程在这时用持有锁对象B同时也调用外部对象A的方法，就会产生死锁。
+解决：需要使用开放调用，即避免在持有锁的情况下调用外部的方法。
+
+两种锁：synchronized和ReentrantLock
+
+1.synchronized关键字：
+实现同步的基础：使用对象锁。
+表现形式：代码块同步和方法同步。本质上都是获取一个对象的监视器（monitor）的所有权，任意一个对象都拥有自己的监视器。
+
+使用场景：
+1.public synchronized void method1：锁的是该对象
+2.synchronized(xxx.class){  }:锁的是该类.
+3.public synchronized static void method3:锁住的是该类,不同对象调用该方法会产生互斥。
+4.synchronized(o) {}：锁是o对象，可以是一个任何Object对象或数组。
+
+2.ReentrantLock锁：一个可重入的互斥锁。
+
+Lock接口,JAVA SE5.0之后并发包中新增了Lock接口用来实现锁的功能,在使用时需要显式地获取和释放锁.
+
+synchronized和ReentrantLock都是重入锁:调用method1()方法时，已经获得了锁，此时内部调用method2()方法时,由于本身已经具有该锁，所以可以再次获取。（即可以被单个线程多次获取。）
+
+synchronized锁是非公平锁。(随机性)
+ReentrantLock可以实现公平锁。(保证线程按照时间的先后顺序执行)，在构造方法传入true，为公平锁；传入false，为非公平锁。
+
+synchronized与ReentrantLock的区别：
+1.ReentrantLock是Lock接口的实现类，而synchronized是Java中的关键字。
+2.synchronized在发生异常时，会自动释放线程占用的锁，不会造成死锁。而Lock没有主动释放机制，需要在finally中unlock()，否则会产生死锁。
+3.lock可以让等待的线程中断等待，而synchronized，等待的线程会一直等待。（ReentrantLock是可中断锁，synchronized是不可中断锁）
+4.Lock可以知道有没有成功获取锁，而synchronized却无法办到。
+5.synchronized是非公平锁，而ReentrantLock可以是公平锁。
+
+线程间通信的两种方式：
+
+一.Object类的wait()/notify()
+
+1.wait():让当前的线程进入等待，释放锁。
+2.wait(long):让当前的线程进入等待，释放锁，不过等待时间为long，超过这个时间没有对当前线程进行唤醒，将自动唤醒。
+3.notify()：当前线程执行完毕后释放锁，并从其他线程中唤醒其中一个继续执行。
+4.notifyAll():当前线程执行完毕后释放锁，将唤醒所有等待状态的线程。
+
+wait()注意事项：
+1.持有锁才能调用wait(),否则会抛出异常。
+2.即wait()方法的调用必须放在synchronized方法或synchronized块中。
+
+notify()方法注意事项：
+1.使用时，唤醒的线程的选择时随意的。
+2.被唤醒的线程并不能执行的，需要等到当前的线程释放锁了，才能执行。
+
+wait与sleep的区别：wait()与sleep():wait会释放锁，而sleep并没有释放锁。
+
+Condition实现等待/通知：
+1.condition.await()—>lock.wait()
+2.condition.await(long time, TimeUnit unit)—>lock.wait(long timeout)
+3.ondition.signal()—>lock.notify()
+4.condition.signaAll()—>lock.notifyAll()
+
+特殊之处：synchronized相当于整个ReentrantLock对象只有一个单一的Condition对象情况。而一个ReentrantLock却可以拥有多个Condition对象，来实现通知部分线程。
+
+相比一生产一消费的模式，改动了两处。①signal()-->signalAll()避免进入“假死”状态。②if()判断-->while()循环，重新判断条件，避免逻辑混乱。
+
+JAVA内存模型：JVM控制的主内存(共享变量)，而每个JAVA线程都有一个自己的工作内存(共享变量的副本)，不同线程之间无法直接访问对方的工作内存，并且，线程对变量的所有操作（读取，赋值）都必须在工作内存中进行。
+
+原子性：即一个操作或者多个操作，要么全部执行，要么都不执行，不能被打断。
+
+在Java中，1.对基本数据类型的变量的*读取*和*赋值*操作是原子性操作。
+2.只有简单的读取、赋值（而且必须是将数字赋值给某个变量，变量之间的相互赋值不是原子操作）才是原子操作。
+
+JAVA实现原子性：要实现更大范围操作的原子性，可以通过synchronized和Lock来实现，因为保证了只有一个线程执行代码块，就不存在原子性的问题了。
+
+可见性：指当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值。
+
+JAVA实现可见性：使用volatile关键字。
+
+有序性：程序执行的顺序按照代码的先后顺序执行。
+
+JAVA不能保证有序性：JVM会对输入代码进行优化，可能会发生指令重排序，但指令重排序会考虑指令之间的数据依赖性，因此不会对结果造成影响。所以指令重排序不会影响单个线程的执行，但是会影响到线程并发执行的正确性。
+
+volatile关键字可以保证一定的“有序性”。
+synchronized和Lock可以保证有序性。
+
+**要想并发程序正确地执行，必须要保证原子性、可见性以及有序性。只要有一个没有被保证，就有可能会导致程序运行不正确。**
+
+Object对象的filalize()会在GC回收它时调用。
+
+Java内存模型具备一些先天的“有序性”，即happens-before原则（先行发生原则）：
+1.程序次序规则：一个线程内，按照代码顺序，书写在前面的操作先行发生于书写在后面的操作
+2.锁定规则：一个unLock操作先行发生于后面对同一个锁的lock操作
+3.volatile变量规则：对一个变量的写操作先行发生于后面对这个变量的读操作
+4.传递规则：如果操作A先行发生于操作B，而操作B又先行发生于操作C，则可以得出操作A先行发生于操作C
+5.线程启动规则：Thread对象的start()方法先行发生于此线程的每个一个动作
+6.线程中断规则：对线程interrupt()方法的调用先行发生于被中断线程的代码检测到中断事件的发生
+7.线程终结规则：线程中所有的操作都先行发生于线程的终止检测，我们可以通过Thread.join()方法结束、Thread.isAlive()的返回值手段检测到线程已经终止执行
+8.对象终结规则：一个对象的初始化完成先行发生于他的finalize()方法的开始。
+
+其中1因为JVM会对代码进行指令重排序，所以在多线程中无法保证有序性。
+
+volatile关键字：保证可见性。
+1.保证了不同线程对这个变量进行操作时的可见性。
+2.禁止进行指令重排序（其实是保证了volatile变量的前面的代码操作会在它前面执行，后面的在它后面执行；至于它前面的代码还是有可能会有指令排序，后面的也一样）。
+3.不保证原子性。
+
+AtomicInteger对自增，自减，以及加法操作，减法操作进行了封装，保证原子性。atomic是利用CAS来实现原子性操作的。
+
+悲观锁：在某个资源不可用的时候，就将cpu让出，把当前等待线程切换为阻塞状态。等到资源(比如一个共享数据）可用了，那么就将线程唤醒，让他进入runnable状态等待cpu调度。
+
+乐观锁：每次不加锁而是假设修改数据之前其他线程一定不会修改，如果因为修改过产生冲突就失败就重试，直到成功为止。 （当数据争用不严重时，乐观锁效果更好）CAS操作就是乐观锁思想。
+
+CAS 操作包含三个操作数——内存位置（V）、预期原值（A）和新值(B)。执行CAS操作的时候，将V的值与A比较，如果相匹配，那么处理器会自动将该位置值更新为新值。否则，处理器不做任何操作。
+
+CAS存在的问题：
+1.ABA问题：不能保证内存位置的A值就是预期原值的A值，可能中间存在了B操作。
+JDK1.5的AtomicStampedReference可以解决ABA问题，通过为每次更新追加上版本号的方式。
+2.自旋CAS如果长时间不成功，会给CPU带来非常大的执行开销。
+3.只能保证一个共享变量的原子操作。
+Java1.5开始JDK提供了AtomicReference类来保证引用对象之间的原子性，你可以把多个变量放在一个对象里来进行CAS操作。
+
+-------------------------
+
+AbstractQueuedSynchronizer提供了一个基于FIFO队列，可以用于构建锁或者其他相关同步装置的基础框架。该同步器利用了一个int来表示状态，期望它能够成为实现大部分同步需求的基础。
+
+Lock类里面有个内部同步器代理类，代理了Lock的方法实现。
+
+AQS简核心是通过一个共享变量来同步状态，变量的状态由子类去维护，而AQS框架做的是
+1.线程阻塞队列的维护2.线程阻塞和唤醒。
+
+Synchronized中，所有的线程都在同一个object的条件队列上等待。而ReentrantLock中，每个condition都维护了一个条件队列。
+
+Condition是与Lock绑定的，如果是公平锁，线程为按照FIFO的顺序从Condition.await中释放，如果是非公平锁，那么后续的锁竞争就不保证FIFO顺序了。 
+
+BlockingQueue接口回顾(线程安全)：
+1.Throws exception：add(e),remove(),element();
+2.Returns special value:offer(e),poll(),peek();
+3.BLocks:put(e),take()
+4.Times out:offer(e,unit),poll(unit){当线程被挂起后，等待最大的时间，如果一旦超时，即使该操作依旧无法继续执行，线程也不会再继续等待下去。}
+
+ArrayBlockingQueue：大小固定的Blocking Queue,有数租维护，循环队列。支持公平锁，底层有由一个ReentrantLock和两个Condition实现，默认是非公平锁。
+
+LinkedBlockingQueue：Executors.newFixedThreadPool()底层所使用的阻塞队列。与ArrayBlockingQueue不同，底层由两个ReentrantLock实现，并用AtomicInteger类型的
+队列中的元素数量变量保证了修改时的原子性，因此，实现了同一时刻既消费、又生产，能够做到并行处理。
+
+HashMap是非线程安全的。可使用HashTable和Collections.synchronizedMap(HashMap)来解决。两个都是对读写进行加锁操作。性能不好。
+
+ConcurrentHashMap JDK1.6 采用分段锁的机制，底层采用数组+链表+红黑树的存储结构。包含两个核心静态内部类Segment和HashEntry。
+1.Segment继承ReentrantLock，是锁，守护每个散列映射表的若干个桶。
+2.HashEntry是用来封装映射表的键值对。
+
+ConcurrentHashMap JDK1.8 利用CAS+Synchronized来保证并发更新的安全，底层依然采用数组+链表+红黑树的存储结构。
+
+ConcurrentHashMap 是一个并发散列映射表的实现，支持给定数量的并发更新。 
