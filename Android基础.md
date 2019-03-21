@@ -682,7 +682,29 @@ PS：注意：除了onCreateView，其他的所有方法如果你重写了，必
 
 **FragmentTransaction.addToBackStack(String)**{把当前事务的变化情况添加到回退栈}
 
+**生命周期的变化**
 
+* 当加载fragment_1时:
+
+  (fragment_1){onAttach->onCreate->onCreatedView->onActivityCreated->onStart->onResume}
+
+* 当加载fragment_2时，此时fragment_1被代替，且被压入回退栈:
+
+  (fragment_1){onPause->onStop->onDestroyView}
+
+  (fragment_2){onAttach->onCreate->onCreateView->onActiviityCreated->onStart->onResume}
+
+  注：如果fragment01在替换的时候没有被压到栈中:
+
+  (fragment_1){onPause->onStop->onDestroyView->onDestroy->onDetach}
+
+* 按Back键，fragment_2被销毁：
+
+  (fragment_2){onPause->onStop->onDestroyView->onDestroy->onDetach}
+
+  (fragment_1){onCreateView->onActivityCreated->onStart->onResume}
+
+* 
 
 ### Fragment与Activity之间的通信
 
@@ -694,6 +716,53 @@ PS：注意：除了onCreateView，其他的所有方法如果你重写了，必
 
 1. 降低Fragment与Activity的耦合，可以使用接口。
 2. Fragment更不应该直接操作别的Fragment。
+
+# Fragment的懒加载
+
+### 实现原理
+
+```java
+//isVisibleToUser表示fragment是否可见
+@Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        //当可见时再进行数据的加载，实现懒加载
+    ...
+    }
+```
+
+- setUserVisbleHint会先于onCreateView执行，需要对View进行判空
+- 由于setUserVisbleHint会多次调用，因此需要判断只有第一次才加载数据
+
+### 具体实现
+
+```java
+@Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view = initView(inflater, container);//让子类实现初始化视图
+        initEvent();//初始化事件
+        isFirstLoad = true;//视图创建完成，将变量置为true
+        if (getUserVisibleHint()) {//如果Fragment可见进行数据加载
+            onLazyLoad();
+            isFirstLoad = false;
+        }
+        return view;
+    }
+
+@Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isFirstLoad && isVisibleToUser) {//视图变为可见并且是第一次加载
+            onLazyLoad();
+            isFirstLoad = false;
+        }
+
+    }
+	public abstract void onLazyLoad();//数据加载
+    public abstract View initView(LayoutInflater inflater, @Nullable ViewGroup container);//初始化视图
+    public abstract void initEvent();//初始化事件
+    //方法运行顺序：initView->initEvent->onLazyLoad;
+```
 
 
 
