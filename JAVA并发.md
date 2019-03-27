@@ -293,7 +293,7 @@ Java内存模型具备一些先天的“有序性”，即happens-before原则�
 
 保证了基础类型对象的一些操作的原子性
 
-例如AtomicInteger对自增，自减，以及加法操作，减法操作进行了封装，保证原子性。atomic是利用CAS来实现原子性操作的。
+例如AtomicInteger对自增，自减，以及加法操作，减法操作进行了封装，保证原子性。atomic是利用**CAS来实现原子性操作的**。
 
 ##### AtomicReference类
 
@@ -357,7 +357,15 @@ Executors.newFixedThreadPool()底层所使用的阻塞队列。与ArrayBlockingQ
 
 ### ==HashTable==
 
-待学
+基本可以等价于HashMap。
+
+不过相比于HashMap,HashTable使用了synchornized关键字实现了线程安全性。
+
+Hashtable和HashMap有几个主要的不同：线程安全以及速度。
+
+1. sychronized意味着在一次仅有一个线程能够更改Hashtable。
+2. 在单线程环境下它比HashMap要慢。
+3. HashTable不允许key和value为null
 
 ### ==ConcurrentHashMap==
 
@@ -365,7 +373,7 @@ HashMap是非线程安全的。可使用HashTable和Collections.synchronizedMap(
 
 #### ConcurrentHashMap JDK1.6 
 
-采用分段锁的机制，底层采用数组+链表+红黑树的存储结构。
+采用**分段锁的机制**，底层采用数组+链表+红黑树的存储结构。
 
 包含两个核心静态内部类Segment和HashEntry。
 
@@ -375,7 +383,12 @@ HashMap是非线程安全的。可使用HashTable和Collections.synchronizedMap(
 
 ![img](http://upload-images.jianshu.io/upload_images/2184951-728c319f48ebe35a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-一个 ConcurrentHashMap 实例中包含由若干个 Segment 对象组成的数组
+ConcurrentHashMap定位一个元素的过程需要进行两次Hash操作：
+
+1. Hash定位到Segment
+2. Hash定位到元素所在的链表的头部。
+
+这一种结构的带来的副作用是Hash的过程要比普通的HashMap要长
 
 #### ConcurrentHashMap JDK1.8 
 
@@ -383,9 +396,17 @@ HashMap是非线程安全的。可使用HashTable和Collections.synchronizedMap(
 
 ![img](http://upload-images.jianshu.io/upload_images/2184951-3d2365ca5996274f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-ConcurrentHashMap 是一个并发散列映射表的实现，支持给定数量的并发更新。 
+~~~java
+class Node<K,V> implements Map.Entry<K,V>{
+    final int hash;
+    final K key;
+    volatile V val;
+    volatile Node<K,V> next;
+    //... 省略部分代码}
+}
+~~~
 
-#### 总结
+Java8 ConcurrentHashMap结构基本上和Java8的HashMap一样，不过通过大量的CAS操作，volatile和synchronized保证线程安全性。
 
  相比于HashTable 和同步包装器包装的 HashMap，对容器的访问变成串行化；ConcurrentHashMap支持给定数量的并发更新。
 
