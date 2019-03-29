@@ -152,6 +152,8 @@ List <? super Circle>
 
 # 反射
 
+反射可以帮助我们在**动态运行**的时候，对于任意一个类，可以获得其所有的方法（包括 public protected private 默认状态的），所有的变量 （包括 public protected private 默认状态的）。
+
 ### 通过Java反射查看类信息
 
 #### 获得Class对象
@@ -187,37 +189,6 @@ List <? super Circle>
 #### 关于泛型的成员变量 
 
 对于获取成员变量的类型：普通类型的 Field 的数据类型可以通过 Field 的 getType() 方法获取；而泛型参数的类型的 Field的泛型类型，则可以通过Field 的getGenericType() 方法获取。
-
-### 反射与动态代理
-
-#### 代理模式
-
-使用代理对象完成用户请求，屏蔽用户对真实对象的访问。
-
-静态代理：代理类是在编译时就实现好的。
-
-动态代理：代理类是在运行时生成的。
-
-代理模式的参与者：
-
-1. 主题接口：委托对象和代理对象共同需要实现的接口。
-
-2. 目标对象：即委托对象。
-
-3. 代理对象：Proxy 是代理对象。
-
-4. 客户端 ：使用代理类和主题接口完成一些工作。
-
-#### Java反射机制与动态代理
-
-动态代理是指在运行时动态生成代理类。
-
-##### 动态代理涉及的主要类
-
-**1.java.lang.reflect.Proxy**:提供了用户创建动态代理类和代理对象的静态方法。
-----1.static Class<?> getProxyClass(ClassLoader loader, Class<?>... interfaces)返回代理类的java.lang.Class对象；  
-----2.static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)返回代理类实例。）
-**2.java.lang.reflect.InvocationHandler**:"调用处理器"，它是一个接口。当调用动态代理类中的方法时，将会直接转接到执行自定义的InvocationHandler中的invoke()方法。
 
 # 注解(Annotation)
 
