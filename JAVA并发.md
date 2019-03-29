@@ -12,8 +12,46 @@
 ### 创建线程的三种方式
 
 1. 继承Thread类创建线程类
+
+~~~java
+import java.lang.Thread;
+class Threads extends Thread{
+    @Override
+    public void run(){
+        //balabala
+    }
+}
+~~~
+
 2. 通过Runnable接口创建线程类
-3. 通过Callable和Future(用实现Future的子类FutureTask)创建线程
+
+~~~java
+import java.lang.Thread;
+import java.lang.Runnable;
+new Thread(new Runnable(){
+            @Override
+            public void run(){
+				//balabala
+            }
+        }).start();
+~~~
+
+3. 通过实现Callable的FutureTask创建线程
+
+~~~java
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+FutureTask<Integer> ft = new FutureTask<>(new Callable<Integer>(){
+            @Override
+            public Integer call(){
+               //balabala
+               return null;
+            }
+        });
+        new Thread(ft).start();
+        System.out.println(ft.get());//会阻塞直到获得返回
+~~~
 
 #### 区别
 
