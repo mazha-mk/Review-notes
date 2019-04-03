@@ -108,7 +108,7 @@ Activity的管理是采用任务栈的形式，任务栈采用“后进先出”
 
 每启动一次Activity，就会创建一个新的Activity实例，压入启动它的Activity所在的栈里。
 
-![http://upload-images.jianshu.io/upload_images/3985563-59e0c33aadd55f62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](file:///C:/Users/马/AppData/Local/Temp/msohtmlclip1/01/clip_image006.jpg)
+![](http://upload-images.jianshu.io/upload_images/3985563-59e0c33aadd55f62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 特殊情况，如果在Service或Application中启动一个Activity，其并没有所谓的任务栈，可以使用标记位Flag来解决。解决办法：为待启动的Activity指定FLAG_ACTIVITY_NEW_TASK标记位，创建一个新栈。
 
@@ -135,7 +135,7 @@ android:launchMode="singleTask"   android:taskAffinity="com.lvr.task"
 
  
 
-执行逻辑：Activity指定的栈不存在，则创建一个栈；Activity指定的栈存在，其中没有该Activity实例，则会创建Activity并压入栈顶；其中有该Activity实例，则把该Activity实例之上的Activity杀死清除出栈，重用并让该Activity实例处在栈顶，然后调用onNewIntent()方法。（**singleTask****会具有****clearTop****特性**）
+执行逻辑：Activity指定的栈不存在，则创建一个栈；Activity指定的栈存在，其中没有该Activity实例，则会创建Activity并压入栈顶；其中有该Activity实例，则把该Activity实例之上的Activity杀死清除出栈，重用并让该Activity实例处在栈顶，然后调用onNewIntent()方法。（**singleTask会具有clearTop特性**）
 
  
 
@@ -1005,7 +1005,7 @@ startService(i);
 
 ### 原理
 
-IntentService内部封装了HandlerThread和Handler，Handler的Looper使用HandlerThread的，并且Handler的handleMessage(Message)方法内部调用抽象方法onNewIntent(Intent intent)得以实现。
+IntentService内部封装了HandlerThread和Handler，Handler的Looper使用HandlerThread的，并且Handler的handleMessage(Message)方法内部调用抽象方法onHandleIntent(Intent intent)得以实现。
 
 
 
@@ -1069,6 +1069,14 @@ IntentService内部封装了HandlerThread和Handler，Handler的Looper使用Hand
            />
 </set>
 ~~~
+
+~~~java
+Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.alpha_anim);
+img = (ImageView) findViewById(R.id.img);
+img.startAnimation(animation);
+~~~
+
+
 
 （java类有对应的属性）
 
