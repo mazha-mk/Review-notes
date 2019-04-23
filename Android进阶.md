@@ -81,7 +81,15 @@ MVP中，model层与presenter层，和presenter层与view层，均是通过接�
 1. 返回true：表示自己处理消费这个事件，事件停止传递，后续事件让其处理。
 2. 返回false：不处理该事件，事件会往上传给父控件的onTouchEvent()处理，当前view不再接收此后续事件。
 
-#### onIntercceptTouchEvent()
+#### View的onTouchEvent（）
+
+* View的onTouch()优先级高于onTouchEvent(),若onTouch返回true，即处理事件序列，那么onTouchEvent将不会接收到事件系列。
+* View的onTouchEvent()默认都会消耗事件(返回true)，除非它是clickable与longClickable同时为false，才默认返回false。
+* 一般的View的longClickable属性默认都为false。
+* 而button的clickable默认为true，而TextView默认为false。
+* View的enable属性不影响onTouchEvent的默认返回值。
+
+#### onInterceptTouchEvent()
 
 **只有ViewGroup有此方法**
 
@@ -120,7 +128,7 @@ public boolean dispatchTouchEvent(MotionEvent ev) {
 
 #### 滑动冲突的解决
 
-1.外部拦截：在父容器的onInterceptTouchEvent方法内部判断是否拦截MotionEvent.ACTION_MOVE,拦截的判断方法可以使用水平方向与竖直方向的距离差作为判断条件。
+1.外部拦截：在父容器的onInterceptTouchEvent方法内部判断是否拦截（是否返回true）MotionEvent.ACTION_MOVE,拦截的判断方法可以使用水平方向与竖直方向的距离差作为判断条件。
 
 2.内部拦截：通过父容器的requestDisallowInterceptTouchEvent方法进行实现。requestDisallowInterceptTouchEvent用于设置是否屏蔽onInterceptTouch方法。
 
@@ -234,6 +242,19 @@ $$
 2. 采用标签ViewStub
 
 > 提供按需加载的功能，当需要时才将ViewStub中的布局加载到内存，**提高程序初始化效率**
+
+~~~xml
+<ViewStub
+        android:id="@+id/view_stub"
+        //被加载的布局
+        android:layout="@layout/layout_to_show"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+~~~
+
+使用 `inflate()` 方法加载布局能返回布局文件的根 View，但是该方法只能使用一次，否则会报错: `ViewStub must have a non-null ViewGroup viewParent`
+
+使用`setVisibility()`设置`VISIBLE `，首次使用也会加载布局。
 
 3. 避免过度绘制
 4. <include/>标签可以封装重复性的布局，减少工作量

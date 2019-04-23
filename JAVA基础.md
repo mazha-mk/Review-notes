@@ -23,7 +23,11 @@ List是**有序集合**，默认从0开始按添加顺序设索引，在Collecti
 
 #### ArrayList
 
-**以数组实现，能自动扩容，可以认为是“动态数组”**。缺点是:如果按下标add(i,e), remove(i), remove(e)，则要用System.arraycopy()来移动部分受影响的元素，性能就变差了，这是基本劣势；其中，自动扩容也是使用的System.arraycopy()来实现。
+**以数组实现，能自动扩容，默认每次扩容0.5倍大小，可以认为是“动态数组”**。缺点是:如果按下标add(i,e), remove(i), remove(e)，则要用System.arraycopy()来移动部分受影响的元素，性能就变差了，这是基本劣势；其中，自动扩容也是使用的System.arraycopy()来实现。
+
+#### Vector
+
+**以数组实现，能自动扩容，默认每次扩容1倍大小，同时实现了线程安全**
 
 #### LinkedList
 
@@ -433,6 +437,60 @@ lambda表达式提供了四种引用方法和构造器的方式：
 2. Class::static_method 静态方法引用
 3. Class::method 某个类的成员方法的引用
 4. instance::method 某个实例对象的成员方法的引用
+
+# 枚举类
+
+### ==特性==
+
+1. 每一个枚举值是 static final的。
+2. 每一个枚举值可以有若干个属性。
+3. 每个枚举值拥有各自的内部方法！
+4. 枚举类型都隐式继承了`java.lang.Enum`类，因此不能继承其他类，但可以实现接口；
+5. 枚举类型只能有私有private的构造方法。
+6. 枚举类默认实现了Comparable接口和Serializable接口。
+   例如：
+
+```java
+public enum Day {
+ MONDAY(1, "星期一", "各种不在状态"){
+        @Override
+        public Day getNext() {
+            return TUESDAY;
+        }
+    },
+    TUESDAY(2, "星期二", "依旧犯困"){
+        @Override
+        public Day getNext() {
+            return WEDNESDAY;
+        }
+    }；
+ Day(int index, String name, String value) {
+        this.index = index;
+        this.name = name;
+        this.value = value;
+    }
+
+private int index;
+private String name;
+private String value;
+public abstract Day getNext();
+
+。。JAVABEAN方法。。
+
+
+}
+```
+
+### 其他
+
+Enum类重写了Object类的四个方法：finalize，hashCode, clone，equal方法，加了final，不让子类重写：
+
+1. finalize：由于枚举类的实例被static final变量强引用，所以不可被垃圾回收，所以重写没有意义。
+2. hashCode：枚举类的实例是不变的，不需要重写。
+3. equal：枚举类的实例是不变的，所以直接用==判断是否相等就可以了。
+4. clone：枚举类的实例不可被克隆。
+
+
 
 # JAVA值传递
 

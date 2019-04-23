@@ -396,6 +396,10 @@ Hashtable和HashMap有几个主要的不同：线程安全以及速度。
 2. 在单线程环境下它比HashMap要慢。
 3. HashTable不允许key和value为null
 
+
+
+**可以使用`Collections`类的`Map<K,V> synchronizedMap(Map<K,V> m) `来实现hashmap的线程安全**
+
 ### ==ConcurrentHashMap==
 
 HashMap是非线程安全的。可使用HashTable和Collections.synchronizedMap(HashMap)来解决。两个都是对读写进行加锁操作。性能不好。
